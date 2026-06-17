@@ -93,6 +93,7 @@ export default function AdminDashboard() {
             name: crop.name,
             description: crop.description,
             price: crop.price,
+            image: crop.image,
             isAvailable: crop.isAvailable,
           }),
         })
