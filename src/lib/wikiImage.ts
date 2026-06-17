@@ -1,8 +1,12 @@
 export async function fetchWikipediaImage(query: string): Promise<string | null> {
   try {
+    const headers = {
+      'User-Agent': 'Farming-Page-App/1.0 (Contact: admin@farming.com)',
+    };
+
     // 1. Try exact title match
     let url = `https://ko.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(query)}&format=json&pithumbsize=500`;
-    let res = await fetch(url);
+    let res = await fetch(url, { headers });
     let data = await res.json();
     let pages = data.query?.pages;
     
@@ -13,7 +17,7 @@ export async function fetchWikipediaImage(query: string): Promise<string | null>
 
     // 2. Fallback to search if exact match has no image
     url = `https://ko.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=3&prop=pageimages&pithumbsize=500&format=json`;
-    res = await fetch(url);
+    res = await fetch(url, { headers });
     data = await res.json();
     pages = data.query?.pages;
 
