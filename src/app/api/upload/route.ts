@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { put } from '@vercel/blob';
 
 export async function POST(request: Request) {
   try {
@@ -11,21 +10,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'No file found' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Create a unique filename
+    // Upload to Vercel Blob
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const filename = uniqueSuffix + '-' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
     
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    const filepath = join(uploadDir, filename);
+    // The `put` method automatically handles the upload and returns the permanent URL
+    const blob = await put(`uploads/${filename}`, file, {
+      access: 'public',
+    });
 
-    await writeFile(filepath, buffer);
-
-    return NextResponse.json({ success: true, url: `/uploads/${filename}` });
+    // Return the URL provided by Vercel Blob
+    return NextResponse.json({ success: true, url: blob.url });
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error uploading file to Vercel Blob:', error);
     return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }
