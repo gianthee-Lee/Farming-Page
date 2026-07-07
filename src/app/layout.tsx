@@ -12,10 +12,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "자연과 함께하는 농장",
-  description: "신선한 농작물과 아늑한 농막이 있는 우리 농장을 소개합니다.",
-};
+import { prisma } from '@/lib/prisma';
+
+export async function generateMetadata() {
+  const siteInfo = await prisma.siteInfo.findUnique({ where: { id: 1 } });
+  return {
+    title: siteInfo?.farmName || "프리미엄 쉼터",
+    description: siteInfo?.cabinIntro || "온전한 쉼을 위한 공간입니다.",
+  };
+}
 
 export default function RootLayout({
   children,
