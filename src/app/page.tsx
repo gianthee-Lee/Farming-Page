@@ -138,9 +138,7 @@ export default async function Home() {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '4rem' }}>
             <a href={`tel:${(siteInfo.phoneNumber || '').replace(/[^0-9]/g, '')}`} 
-               style={{ padding: '1rem 2.5rem', border: '1px solid #4b5563', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', transition: 'background-color 0.3s' }}
-               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#374151'}
-               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+               style={{ padding: '1rem 2.5rem', border: '1px solid #4b5563', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', transition: 'background-color 0.3s' }}>
               <Phone size={18} />
               전화 문의
             </a>
