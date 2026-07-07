@@ -6,6 +6,7 @@ import Image from 'next/image';
 type SiteInfo = {
   farmName: string;
   farmIntro: string;
+  introText?: string;
   farmImage: string | null;
   heroNotice: string;
   cartName: string;
@@ -163,6 +164,10 @@ export default function AdminDashboard() {
             <div>
               <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>농장 소개글</label>
               <textarea value={siteInfo.farmIntro} onChange={(e) => setSiteInfo({ ...siteInfo, farmIntro: e.target.value })} rows={3} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.25rem', border: '1px solid #ccc' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>오프닝 애니메이션 문구</label>
+              <input type="text" value={siteInfo.introText || ''} onChange={(e) => setSiteInfo({ ...siteInfo, introText: e.target.value })} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.25rem', border: '1px solid #ccc' }} />
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.5rem' }}>농장 배경 사진</label>

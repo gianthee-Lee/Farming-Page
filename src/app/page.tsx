@@ -4,6 +4,7 @@ import styles from './page.module.css';
 import { Phone, MessageCircle, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import CropsAndCart from '@/components/CropsAndCart';
+import IntroAnimation from '@/components/IntroAnimation';
 
 export const revalidate = 0; // Disable caching for simple CMS updates
 
@@ -11,11 +12,13 @@ export default async function Home() {
   const siteInfo = await prisma.siteInfo.findUnique({ where: { id: 1 } }) || {
     farmName: '행복한 농장',
     farmIntro: '신선하고 맛있는 농작물을 재배하는 행복한 농장입니다.',
+    introText: '온전한 쉼을 위한 공간, 여행',
     farmImage: null,
     heroNotice: '',
     cartName: '쇼핑 카트',
     cabinIntro: '아늑하고 편안한 쉼터, 저희 농장의 농막을 소개합니다.',
     cabinImage: null,
+    cabinImages: '[]',
     phoneNumber: '010-0000-0000',
     kakaoLink: '#',
     address: '강원도 어딘가 멋진 농장',
@@ -28,85 +31,128 @@ export default async function Home() {
     ],
   });
 
+  let cabinImagesList: string[] = [];
+  try {
+    cabinImagesList = JSON.parse(siteInfo.cabinImages);
+  } catch(e) {}
+  
+  if (cabinImagesList.length === 0 && siteInfo.cabinImage) {
+    cabinImagesList = [siteInfo.cabinImage];
+  }
+
   return (
     <>
-      <main>
-        {/* Hero Section */}
-        <section className={styles.hero}>
-          <div className={styles.heroBackground}>
-            {siteInfo.farmImage ? (
+      <IntroAnimation text={siteInfo.introText || '온전한 쉼을 위한 공간, 여행'} />
+      
+      <main style={{ backgroundColor: '#ffffff', color: '#111827' }}>
+        
+        {/* Luxury Hero Section (Cabin Focused) */}
+        <section style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+            {cabinImagesList.length > 0 ? (
+              <Image
+                src={cabinImagesList[0]}
+                alt="Cabin Main"
+                fill
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+            ) : siteInfo.farmImage ? (
               <Image
                 src={siteInfo.farmImage}
-                alt="Farm Background"
+                alt="Farm Main"
                 fill
-                className={styles.heroImage}
+                style={{ objectFit: 'cover' }}
                 priority
               />
             ) : (
-              <div style={{ backgroundColor: 'var(--primary)', width: '100%', height: '100%' }} />
+              <div style={{ backgroundColor: '#f3f4f6', width: '100%', height: '100%' }} />
             )}
-            <div className={styles.heroOverlay} />
+            {/* Elegant dark overlay */}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }} />
           </div>
-          <div className={`${styles.heroContent} animate-fade-in`}>
-            <h1 className={styles.heroTitle}>{siteInfo.farmName}</h1>
-            <p className={styles.heroDesc}>{siteInfo.farmIntro}</p>
+          
+          <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', color: '#ffffff', padding: '0 2rem' }}>
+            <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', fontWeight: '300', letterSpacing: '0.05em', marginBottom: '1.5rem', fontFamily: 'serif' }}>
+              {siteInfo.farmName}
+            </h1>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: '300', letterSpacing: '0.1em', opacity: 0.9, marginBottom: '3rem', whiteSpace: 'pre-wrap' }}>
+              {siteInfo.cabinIntro}
+            </p>
             {siteInfo.heroNotice && (
-              <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: '#ffedd5', fontSize: '1.1rem', backgroundColor: 'rgba(0,0,0,0.4)', padding: '0.5rem 1rem', borderRadius: '0.5rem', backdropFilter: 'blur(4px)' }}>
+              <p style={{ display: 'inline-block', fontSize: '0.875rem', letterSpacing: '0.05em', backgroundColor: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', padding: '0.75rem 1.5rem', border: '1px solid rgba(255,255,255,0.2)' }}>
                 {siteInfo.heroNotice}
               </p>
             )}
-            <Link href="/cabin" className="btn btn-primary" style={{ backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.4)', marginTop: '0.5rem', color: 'white' }}>
-              🏡 농막 구경하기
-            </Link>
           </div>
         </section>
 
-        {/* Crops Section with Shopping Cart */}
-        <CropsAndCart crops={crops} cartName={siteInfo.cartName || "쇼핑 카트"} />
+        {/* Minimalist Cabin Story Section */}
+        {cabinImagesList.length > 1 && (
+          <section style={{ padding: '8rem 2rem', backgroundColor: '#ffffff', textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: '300', letterSpacing: '0.1em', marginBottom: '4rem', fontFamily: 'serif' }}>THE SPACE</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              {cabinImagesList.slice(1, 4).map((img, idx) => (
+                <div key={idx} style={{ position: 'relative', aspectRatio: '4/5', overflow: 'hidden' }}>
+                  <Image src={img} alt={`Space ${idx+1}`} fill style={{ objectFit: 'cover' }} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Crops Section renamed to "Organic Market" */}
+        <section id="organic-market" style={{ padding: '6rem 0', backgroundColor: '#fafafa', borderTop: '1px solid #eaeaea' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: '300', letterSpacing: '0.05em', fontFamily: 'serif', color: '#111827' }}>
+              오가닉 마켓
+            </h2>
+            <p style={{ marginTop: '1rem', color: '#6b7280', fontSize: '1rem', letterSpacing: '0.05em' }}>
+              자연이 길러낸 건강한 재료, {siteInfo.farmName}의 프리미엄 셀렉션
+            </p>
+          </div>
+          <CropsAndCart crops={crops} cartName={siteInfo.cartName || "쇼핑 카트"} />
+        </section>
+
       </main>
 
-      {/* Footer / Contact Section */}
-      <footer style={{ backgroundColor: '#1f2937', color: '#f3f4f6', padding: '4rem 0', textAlign: 'center' }}>
-        <div className={styles.container}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>문의 및 오시는 길</h2>
+      {/* Luxury Footer */}
+      <footer style={{ backgroundColor: '#111827', color: '#9ca3af', padding: '6rem 2rem', textAlign: 'center' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '3rem', fontWeight: '300', letterSpacing: '0.1em', color: '#ffffff', fontFamily: 'serif' }}>
+            {siteInfo.farmName}
+          </h2>
           
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
             {siteInfo.address && (
-              <div style={{ width: '100%', maxWidth: '600px', height: '300px', borderRadius: '0.5rem', overflow: 'hidden', marginBottom: '0.5rem', border: '1px solid #374151', backgroundColor: '#374151' }}>
-                <iframe
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  allowFullScreen
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(siteInfo.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '300', letterSpacing: '0.05em' }}>
+                <MapPin size={16} />
+                <span>{siteInfo.address}</span>
               </div>
             )}
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#d1d5db' }}>
-              <MapPin size={20} />
-              <span>{siteInfo.address}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#d1d5db' }}>
-              <Phone size={20} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '300', letterSpacing: '0.05em' }}>
+              <Phone size={16} />
               <span>{siteInfo.phoneNumber}</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href={`tel:${(siteInfo.phoneNumber || '').replace(/[^0-9]/g, '')}`} className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
-              <Phone className={styles.iconWrapper} size={20} />
-              전화 연결
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '4rem' }}>
+            <a href={`tel:${(siteInfo.phoneNumber || '').replace(/[^0-9]/g, '')}`} 
+               style={{ padding: '1rem 2.5rem', border: '1px solid #4b5563', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', transition: 'background-color 0.3s' }}
+               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#374151'}
+               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <Phone size={18} />
+              전화 문의
             </a>
-            <a href={siteInfo.kakaoLink} target="_blank" rel="noopener noreferrer" className="btn btn-kakao" style={{ padding: '0.75rem 2rem' }}>
-              <MessageCircle className={styles.iconWrapper} size={20} />
+            <a href={siteInfo.kakaoLink} target="_blank" rel="noopener noreferrer" 
+               style={{ padding: '1rem 2.5rem', backgroundColor: '#FEE500', color: '#000000', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
+              <MessageCircle size={18} />
               카카오톡 상담
             </a>
           </div>
           
-          <p style={{ marginTop: '3rem', fontSize: '0.875rem', color: '#6b7280' }}>
-            &copy; {new Date().getFullYear()} {siteInfo.farmName}. All rights reserved.
+          <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em' }}>
+            &copy; {new Date().getFullYear()} {siteInfo.farmName}. ALL RIGHTS RESERVED.
           </p>
         </div>
       </footer>

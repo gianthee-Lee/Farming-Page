@@ -15,6 +15,7 @@ model SiteInfo {
   farmName       String   @default("행복한 농장")
   farmIntro      String   @default("신선하고 맛있는 농작물을 재배하는 행복한 농장입니다.")
   farmImage      String?
+  introText      String   @default("온전한 쉼을 위한 공간, 여행")
   heroNotice     String   @default("운영시간: 매일 09:00 ~ 18:00")
   cartName       String   @default("쇼핑 카트")
   cabinIntro     String   @default("아늑하고 편안한 쉼터, 저희 농장의 농막을 소개합니다.")

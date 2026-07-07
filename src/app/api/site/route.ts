@@ -41,6 +41,7 @@ export async function PUT(request: Request) {
       update: {
         farmName: data.farmName,
         farmIntro: data.farmIntro,
+        introText: data.introText !== undefined ? data.introText : "온전한 쉼을 위한 공간, 여행",
         heroNotice: data.heroNotice,
         cartName: data.cartName,
         farmImage: data.farmImage,
@@ -55,6 +56,7 @@ export async function PUT(request: Request) {
         id: 1,
         farmName: data.farmName,
         farmIntro: data.farmIntro,
+        introText: data.introText !== undefined ? data.introText : "온전한 쉼을 위한 공간, 여행",
         heroNotice: data.heroNotice,
         cartName: data.cartName,
         farmImage: data.farmImage,
