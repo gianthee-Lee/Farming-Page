@@ -66,7 +66,14 @@ export default async function Home() {
                 priority
               />
             ) : (
-              <div style={{ backgroundColor: '#f3f4f6', width: '100%', height: '100%' }} />
+              <div style={{ 
+                width: '100%', 
+                height: '100%', 
+                backgroundImage: "url('/hero-bg.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'top center',
+                animation: 'panDown 6s cubic-bezier(0.25, 1, 0.5, 1) 1.5s forwards'
+              }} />
             )}
             {/* Elegant dark overlay */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }} />
@@ -154,6 +161,12 @@ export default async function Home() {
           </p>
         </div>
       </footer>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes panDown {
+          0% { background-position: top center; }
+          100% { background-position: bottom center; }
+        }
+      `}} />
     </>
   );
 }
